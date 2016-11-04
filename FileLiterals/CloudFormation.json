@@ -1,0 +1,48 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Metadata": {},
+  "Parameters": {
+    "S3Bucket": {
+      "Type": "String"
+    },
+    "S3Key": {
+      "Type": "String"
+    },
+    "S3ObjectVersion": {
+      "Type": "String"
+    },
+    "Role": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "MyFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Handler": "index.handler",
+        "Role": {"Ref": "Role"},
+        "Runtime": "nodejs4.3",
+        "Code": {
+          "S3Bucket": {"Ref": "S3Bucket"},
+          "S3Key": {"Ref": "S3Key"},
+          "S3ObjectVersion": {"Ref": "S3ObjectVersion"}
+        },
+        "MemorySize": 128,
+        "Timeout": 30,
+        "Environment": {
+          "Variables": {
+            "SOME_VAR": "itsvalue"
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "FunctionName": {
+      "Value": {"Ref": "MyFunction"}
+    },
+    "FunctionArn": {
+      "Value": {"Fn::GetAtt": ["MyFunction", "Arn"]}
+    }
+  }
+}
