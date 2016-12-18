@@ -1,6 +1,0 @@
-FROM awswift/swift-deps:0.1
-
-WORKDIR /
-RUN curl https://s3-ap-southeast-2.amazonaws.com/test-swift-bucket/swift-linux-x86_64-amzn.tgz | tar -zxv --skip-old-files
-ENV LD_LIBRARY_PATH /usr/lib
- 
