@@ -9,7 +9,7 @@ node('xcode') {
                 sh 'swift package fetch'
             }
 
-            stage('build) {
+            stage('build') {
                 sh 'swift build'
             }
         }
