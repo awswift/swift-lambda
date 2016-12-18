@@ -12,6 +12,10 @@ node('xcode') {
             stage('build') {
                 sh 'swift build'
             }
+
+            stage('tests') {
+                sh 'swift test'
+            }
         }
     }
 }
