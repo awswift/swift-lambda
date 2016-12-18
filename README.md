@@ -1,5 +1,7 @@
 # Swiftda
 
+[![Build Status](https://jenkins.awswift.ge.cx/buildStatus/icon?job=awswift/swiftda/master&build=4)](https://jenkins.awswift.ge.cx/job/awswift/job/swiftda/job/master/4/)
+
 Swiftda brings the power and ease-of-use of the [Swift](https://swift.org) programming language to the scalability and buzzword-compliance of [AWS Lambda](https://aws.amazon.com/lambda/). Use the tools you already know and love to power the backend of your mobile application.
 
 ## Pre-requisites
