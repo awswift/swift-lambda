@@ -3,6 +3,7 @@ node('xcode') {
         timestamps {
             stage('git') {
                 checkout scm
+                sh 'git submodule update --init'
             }
 
             stage('fetch') {
