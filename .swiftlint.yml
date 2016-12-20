@@ -1,2 +1,6 @@
 excluded:
   - Packages
+  - Sources/FileLiterals.swift
+line_length: 132
+disabled_rules:
+  - force_try # TODO come back and fix this

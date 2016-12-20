@@ -3,15 +3,15 @@ import Commander
 import Rainbow
 import SwiftyJSON
 
-func packageInfo() -> [String: Any] {
+func packageInfo() -> JSON {
     let (_, stdout, _) = ShellCommand.piped(command: "swift package dump-package", label: "pkg info")
-    return try! JSONSerialization.jsonObject(with: stdout.data(using: .utf8)!, options: []) as! [String: Any]
+    return JSON(data: stdout.data(using: .utf8)!)
 }
 
 var config = Template.parseTemplateAtPath(".")!
 
 func dockerfile() -> String {
-    let packageName = packageInfo()["name"] as! String
+    let packageName = packageInfo()["name"].stringValue
 
     return [
         "FROM awswift/swiftda",
@@ -30,7 +30,7 @@ func dockerfile() -> String {
 
 class BuildCommand {
     func command() {
-        let packageName = packageInfo()["name"] as! String
+        let packageName = packageInfo()["name"].stringValue
 
         _ = ShellCommand.piped(command: "mkdir -p .swiftda", label: nil)
 
@@ -72,7 +72,8 @@ struct CloudFormation {
      }
      
      static func stackStatus(_ name: String) -> StackStatus {
-     let (ec, stdout, _) = ShellCommand.piped(command: "aws cloudformation describe-stacks --stack-name \(name) --query Stacks[0].StackStatus --output text", label: "cfn check")
+     let (ec, stdout, _) = ShellCommand.piped(command: "aws cloudformation describe-stacks --stack-name \(name) 
+     --query Stacks[0].StackStatus --output text", label: "cfn check")
      let statusStr = stdout.trimmingCharacters(in: .newlines)
      
      if ec > 0 {
@@ -123,7 +124,8 @@ struct CloudFormation {
     }
 
     static func outputs(name: String) -> [String: String] {
-        let (_, stdout, _) = ShellCommand.piped(command: "aws cloudformation describe-stacks --stack-name \(name) --query Stacks[0].Outputs", label: "cfn outputs")
+        let cmd = "aws cloudformation describe-stacks --stack-name \(name) --query Stacks[0].Outputs"
+        let (_, stdout, _) = ShellCommand.piped(command: cmd, label: "cfn outputs")
         let json = JSON(data: stdout.data(using: .utf8)!)
         var outputs: [String: String] = [:]
         json.arrayValue.forEach { outputs[$0["OutputKey"].stringValue] = $0["OutputValue"].stringValue }
@@ -149,7 +151,8 @@ class DeployCommand {
         }
 
         _ = ShellCommand.piped(command: "aws s3 cp \(zipPath) s3://\(config.bucket)/\(config.key)", label: "s3 cp")
-        let (_, s3stdout, _) = ShellCommand.piped(command: "aws s3api head-object --bucket \(config.bucket) --key \(config.key) --query VersionId --output text", label: "s3 ver")
+        let cmd = "aws s3api head-object --bucket \(config.bucket) --key \(config.key) --query VersionId --output text"
+        let (_, s3stdout, _) = ShellCommand.piped(command: cmd, label: "s3 ver")
         let s3version = s3stdout.trimmingCharacters(in: .newlines)
 
         let params = [
@@ -174,7 +177,8 @@ class InvokeCommand {
         let stackOutputs = CloudFormation.outputs(name: config.name)
         let functionName = stackOutputs["FunctionName"]!
 
-        let (_, stdout, _) = ShellCommand.piped(command: "aws lambda invoke --function-name \(functionName) --log-type Tail /dev/null", label: "ƛ invoke")
+        let cmd = "aws lambda invoke --function-name \(functionName) --log-type Tail /dev/null"
+        let (_, stdout, _) = ShellCommand.piped(command: cmd, label: "ƛ invoke")
         let json = JSON(data: stdout.data(using: .utf8)!)
         let logb64 = json["LogResult"].stringValue
         let logData = Data(base64Encoded: logb64, options: [])

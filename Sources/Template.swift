@@ -42,45 +42,31 @@ struct Template {
     }
 
     var name: String {
-        get {
-            return json["Metadata"]["Name"].stringValue
-        }
+        return json["Metadata"]["Name"].stringValue
     }
 
     var role: String {
-        get {
-            return json["Metadata"]["Role"].string ?? defaults["SwiftdaExecutionRoleArn"]!
-        }
+        return json["Metadata"]["Role"].string ?? defaults["SwiftdaExecutionRoleArn"]!
     }
 
     var bucket: String {
-        get {
-            return json["Metadata"]["Bucket"].string ?? defaults["SwiftdaCodeStorageBucket"]!
-        }
+        return json["Metadata"]["Bucket"].string ?? defaults["SwiftdaCodeStorageBucket"]!
     }
 
     var key: String {
-        get {
-            return json["Metadata"]["Key"].string ?? "\(name).zip"
-        }
+        return json["Metadata"]["Key"].string ?? "\(name).zip"
     }
 
     var description: String {
-        get {
-            return json["Metadata"]["Description"].stringValue
-        }
+        return json["Metadata"]["Description"].stringValue
     }
 
     var memory: String {
-        get {
-            return json["Metadata"]["Memory"].stringValue
-        }
+        return json["Metadata"]["Memory"].stringValue
     }
 
     var timeout: String {
-        get {
-            return json["Metadata"]["Timeout"].stringValue
-        }
+        return json["Metadata"]["Timeout"].stringValue
     }
 
     func write(to url: URL) {
