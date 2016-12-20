@@ -11,7 +11,11 @@ node('xcode') {
             }
 
             stage('lint') {
-                sh 'Checks/Shared/core.js Checks/Shared/swiftlint.js'
+                withCredentials([
+                    [$class: 'StringBinding', credentialsId: 'github', variable: 'CHECKS_GITHUB_TOKEN']
+                ]) {
+                    sh 'Checks/Shared/core.js Checks/Shared/swiftlint.js'
+                }
             }
 
             stage('build') {
