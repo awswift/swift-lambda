@@ -9,6 +9,10 @@ node('xcode') {
                 sh 'swift package fetch'
             }
 
+            stage('lint') {
+                sh 'Checks/Shared/core.js Checks/Shared/swiftlint.js'
+            }
+
             stage('build') {
                 sh 'swift build'
             }
