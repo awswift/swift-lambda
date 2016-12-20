@@ -1,0 +1,3 @@
+[submodule "Checks/Shared"]
+	path = Checks/Shared
+	url = https://github.com/glassechidna/checks
