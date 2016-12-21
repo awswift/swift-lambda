@@ -1,7 +1,7 @@
 import Foundation
 
 struct ShellCommand {
-    static func command(command: String, stdout: @escaping (_: String) -> (), stderr: @escaping (_: String) -> ()) -> Int {
+    static func command(command: String, stdout: @escaping (_: String) -> Void, stderr: @escaping (_: String) -> Void) -> Int {
         #if os(Linux)
             let buildProcess = Task()
         #else
