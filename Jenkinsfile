@@ -12,6 +12,16 @@ def doit() {
         checks('Shared/swiftlint.js')
     }
 
+    stage('xcode') {
+        sh 'bundle'
+        sh 'swift package generate-xcodeproj'
+        try {
+            sh 'xcodebuild -target Swiftda | bundle exec xcpretty -f `bundle exec xcpretty-json-formatter` && exit ${PIPESTATUS[0]}'
+        } finally {
+            checks('Shared/xcpretty.js')
+        }
+    }
+
     stage('build') {
         sh 'swift build'
     }
@@ -31,7 +41,9 @@ def checks(name) {
 node('xcode') {
     ansiColor('xterm') {
         timestamps {
-            doit()
+            timeout(30) {
+                doit()
+            }
         }
     }
 }
