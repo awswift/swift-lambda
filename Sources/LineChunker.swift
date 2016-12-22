@@ -1,8 +1,8 @@
 class LineChunker {
     private var chunk: String
-    private var callback: (_: String) -> ()
+    private var callback: (_: String) -> Void
 
-    init(callback: @escaping (_: String) -> ()) {
+    init(callback: @escaping (_: String) -> Void) {
         self.chunk = ""
         self.callback = callback
     }
