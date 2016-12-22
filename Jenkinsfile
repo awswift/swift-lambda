@@ -41,7 +41,9 @@ def checks(name) {
 node('xcode') {
     ansiColor('xterm') {
         timestamps {
-            doit()
+            timeout(30) {
+                doit()
+            }
         }
     }
 }
