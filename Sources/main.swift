@@ -16,15 +16,17 @@ func dockerfile() -> String {
     return [
         "FROM awswift/swiftda",
         "WORKDIR /app",
+        "RUN mkdir -p .build/debug",
+        "RUN cp /usr/lib/swift/linux/*.so* .build/debug/",
+        "COPY .swiftda/index.js .build/debug/",
+        "RUN cd .build/debug && zip /app/lambda.zip *.so* index.js",
         "COPY Package.swift .",
         "RUN swift package fetch",
         "COPY . .",
         "RUN swift build",
         "WORKDIR .build/debug",
-        "RUN cp /usr/lib/swift/linux/*.so* .",
-        "RUN cp ../../.swiftda/index.js .",
         "RUN mv \(packageName) swiftdaEntrypoint",
-        "RUN zip /app/lambda.zip swiftdaEntrypoint *.so* index.js"
+        "RUN zip /app/lambda.zip swiftdaEntrypoint"
         ].joined(separator: "\n")
 }
 
