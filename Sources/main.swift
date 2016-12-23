@@ -8,8 +8,6 @@ func packageInfo() -> JSON {
     return JSON(data: stdout.data(using: .utf8)!)
 }
 
-var config = Template.parseTemplateAtPath(".")!
-
 func dockerfile() -> String {
     let packageName = packageInfo()["name"].stringValue
 
@@ -145,6 +143,8 @@ struct CloudFormation {
 
 class DeployCommand {
     func command(newVersion: Bool) {
+        let config = Template.parseTemplateAtPath(".")!
+        
         let zipUrl = URL(string: "\(config.name).lambda.zip", relativeTo: config.url)!
         let zipPath = zipUrl.path
 
@@ -175,6 +175,8 @@ class InvokeCommand {
         if async || local {
             fatalError("Not implemented yet")
         }
+        
+        let config = Template.parseTemplateAtPath(".")!
 
         let stackOutputs = CloudFormation.outputs(name: config.name)
         let functionName = stackOutputs["FunctionName"]!
@@ -191,6 +193,8 @@ class InvokeCommand {
 
 class LogsCommand {
     func command(tail: Bool) {
+        let config = Template.parseTemplateAtPath(".")!
+        
         let stackOutputs = CloudFormation.outputs(name: config.name)
         let functionName = stackOutputs["FunctionName"]!
         let group = "/aws/lambda/\(functionName)"
@@ -220,6 +224,7 @@ class LogsCommand {
 
 class DestroyCommand {
     func command() {
+        let config = Template.parseTemplateAtPath(".")!
         CloudFormation.stackDown(name: config.name)
     }
 }
