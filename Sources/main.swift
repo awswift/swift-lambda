@@ -237,10 +237,34 @@ class SetupCommand {
     }
 }
 
-let main = Group {
-    $0.command("init", Argument("name", description: "Name of new project")) { (name: String) in
-        fatalError("Not implemented yet")
+class InitCommand {
+    func command(name: String) {
+        do {
+            let fm = FileManager.default
+            
+            let cwdStr = fm.currentDirectoryPath
+            let cwd = URL(fileURLWithPath: cwdStr, isDirectory: true)
+            let dir = cwd.appendingPathComponent(name)
+            
+            try fm.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
+            try fm.createDirectory(at: dir.appendingPathComponent("Sources"), withIntermediateDirectories: true, attributes: nil)
+            
+            let packageStr = FileLiterals.InitFiles_Package.replacingOccurrences(of: "<name>", with: name)
+            try packageStr.write(to: dir.appendingPathComponent("Package.swift"), atomically: true, encoding: .utf8)
+            
+            let swiftdaStr = FileLiterals.InitFiles_Swiftda.replacingOccurrences(of: "<name>", with: name)
+            try swiftdaStr.write(to: dir.appendingPathComponent("Swiftda.json"), atomically: true, encoding: .utf8)
+            
+            try FileLiterals.InitFiles_main.write(to: dir.appendingPathComponent("Sources/main.swift"), atomically: true, encoding: .utf8)
+            try FileLiterals.InitFiles_dockerignore.write(to: dir.appendingPathComponent(".dockerignore"), atomically: true, encoding: .utf8)
+        } catch {
+        
+        }
     }
+}
+
+let main = Group {
+    $0.command("init", Argument("name", description: "Name of new project"), InitCommand().command)
 
     $0.command("build", BuildCommand().command)
 

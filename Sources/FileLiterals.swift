@@ -50,46 +50,6 @@ struct FileLiterals {
         "}",
     ].joined(separator: "\n")
 
-    static let CloudFormation2 = [
-        "---",
-        "AWSTemplateFormatVersion: '2010-09-09'",
-        "",
-        "Metadata: {}",
-        "",
-        "Parameters:",
-        "  S3Bucket:",
-        "    Type: String",
-        "  S3Key:",
-        "    Type: String",
-        "  S3ObjectVersion:",
-        "    Type: String",
-        "  Role:",
-        "    Type: String",
-        "",
-        "Resources:",
-        "  MyFunction:",
-        "    Type: AWS::Lambda::Function",
-        "    Properties:",
-        "      Handler: index.handler",
-        "      Role: !Ref Role",
-        "      Runtime: nodejs4.3",
-        "      Code:",
-        "        S3Bucket: !Ref S3Bucket",
-        "        S3Key: !Ref S3Key",
-        "        S3ObjectVersion: !Ref S3ObjectVersion",
-        "      MemorySize: 128",
-        "      Timeout: 30",
-        "      Environment:",
-        "        Variables:",
-        "          SOME_VAR: itsvalue",
-        "",
-        "Outputs:",
-        "  FunctionName:",
-        "    Value: !Ref MyFunction",
-        "  FunctionArn:",
-        "    Value: !GetAtt MyFunction.Arn",
-    ].joined(separator: "\n")
-
     static let index = [
         "\"use strict\";",
         "var childProcess = require('child_process');",
@@ -107,6 +67,45 @@ struct FileLiterals {
         "    console.log(output);",
         "    callback(null, output);",
         "};",
+    ].joined(separator: "\n")
+
+    static let InitFiles_dockerignore = [
+        ".build",
+        ".git",
+        "Packages",
+    ].joined(separator: "\n")
+
+    static let InitFiles_main = [
+        "import Foundation",
+        "",
+        "let inputData = FileHandle.standardInput.readDataToEndOfFile()",
+        "let json = try! JSONSerialization.jsonObject(with: inputData, options: []) as! [String: Any]",
+        "",
+        "var copy = json",
+        "copy[\"output\"] = \"Hello, world!\"",
+        "",
+        "let outputData = try! JSONSerialization.data(withJSONObject: copy, options: [])",
+        "FileHandle.standardOutput.write(outputData)",
+    ].joined(separator: "\n")
+
+    static let InitFiles_Package = [
+        "import PackageDescription",
+        "",
+        "let package = Package(",
+        "    name: \"<name>\",",
+        "    dependencies: [",
+        "        .Package(url: \"https://github.com/awswift/awswift\", majorVersion: 0)",
+        "    ]",
+        ")",
+    ].joined(separator: "\n")
+
+    static let InitFiles_Swiftda = [
+        "{",
+        "    \"Name\": \"<name>\",",
+        "    \"Description\": \"\",",
+        "    \"Memory\": 128,",
+        "    \"Timeout\": 30",
+        "}",
     ].joined(separator: "\n")
 
     static let InitialSetup = [
