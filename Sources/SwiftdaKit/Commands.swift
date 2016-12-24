@@ -172,6 +172,12 @@ class DeployCommand {
 
 class InvokeCommand {
     func command(async: Bool, local: Bool) {
+        let log = invoke(async: async, local: local)
+        print(log)
+    }
+
+    // TODO: leaky because of unit testing?
+    func invoke(async: Bool, local: Bool) -> String {
         if async || local {
             fatalError("Not implemented yet")
         }
@@ -186,8 +192,7 @@ class InvokeCommand {
         let json = JSON(data: stdout.data(using: .utf8)!)
         let logb64 = json["LogResult"].stringValue
         let logData = Data(base64Encoded: logb64, options: [])
-        let log = String(data: logData!, encoding: .utf8)!
-        print(log)
+        return String(data: logData!, encoding: .utf8)!
     }
 }
 
