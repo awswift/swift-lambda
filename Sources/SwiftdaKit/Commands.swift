@@ -72,7 +72,7 @@ struct CloudFormation {
      }
      
      static func stackStatus(_ name: String) -> StackStatus {
-     let (ec, stdout, _) = ShellCommand.piped(command: "aws cloudformation describe-stacks --stack-name \(name) 
+     let (ec, stdout, _) = ShellCommand.piped(command: "aws cloudformation describe-stacks --stack-name \(name)
      --query Stacks[0].StackStatus --output text", label: "cfn check")
      let statusStr = stdout.trimmingCharacters(in: .newlines)
      
@@ -144,7 +144,7 @@ struct CloudFormation {
 class DeployCommand {
     func command(newVersion: Bool) {
         let config = Template.parseTemplateAtPath(".")!
-        
+
         let zipUrl = URL(string: "\(config.name).lambda.zip", relativeTo: config.url)!
         let zipPath = zipUrl.path
 
@@ -175,7 +175,7 @@ class InvokeCommand {
         if async || local {
             fatalError("Not implemented yet")
         }
-        
+
         let config = Template.parseTemplateAtPath(".")!
 
         let stackOutputs = CloudFormation.outputs(name: config.name)
@@ -194,7 +194,7 @@ class InvokeCommand {
 class LogsCommand {
     func command(tail: Bool) {
         let config = Template.parseTemplateAtPath(".")!
-        
+
         let stackOutputs = CloudFormation.outputs(name: config.name)
         let functionName = stackOutputs["FunctionName"]!
         let group = "/aws/lambda/\(functionName)"
@@ -241,29 +241,29 @@ class InitCommand {
     func command(name: String) {
         do {
             let fm = FileManager.default
-            
+
             let cwdStr = fm.currentDirectoryPath
             let cwd = URL(fileURLWithPath: cwdStr, isDirectory: true)
             let dir = cwd.appendingPathComponent(name)
-            
+
             try fm.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
             try fm.createDirectory(at: dir.appendingPathComponent("Sources"), withIntermediateDirectories: true, attributes: nil)
-            
+
             let packageStr = FileLiterals.InitFiles_Package.replacingOccurrences(of: "<name>", with: name)
             try packageStr.write(to: dir.appendingPathComponent("Package.swift"), atomically: true, encoding: .utf8)
-            
+
             let swiftdaStr = FileLiterals.InitFiles_Swiftda.replacingOccurrences(of: "<name>", with: name)
             try swiftdaStr.write(to: dir.appendingPathComponent("Swiftda.json"), atomically: true, encoding: .utf8)
-            
+
             try FileLiterals.InitFiles_main.write(to: dir.appendingPathComponent("Sources/main.swift"), atomically: true, encoding: .utf8)
             try FileLiterals.InitFiles_dockerignore.write(to: dir.appendingPathComponent(".dockerignore"), atomically: true, encoding: .utf8)
         } catch {
-        
+
         }
     }
 }
 
-let main = Group {
+public let MainCommand = Group {
     $0.command("init", Argument("name", description: "Name of new project"), InitCommand().command)
 
     $0.command("build", BuildCommand().command)
@@ -282,5 +282,3 @@ let main = Group {
 
     $0.command("invoke", Flag("async"), Flag("local"), InvokeCommand().command)
 }
-
-main.run()
