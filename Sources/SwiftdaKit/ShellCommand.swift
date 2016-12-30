@@ -52,21 +52,29 @@ struct ShellCommand {
         sema.wait()
         return Int(buildProcess.terminationStatus)
     }
+    
+    struct Redir: TextOutputStream {
+        mutating func write(_ string: String) {
+            FileHandle.standardError.write(string.data(using: .utf8)!)
+        }
+    }
 
     static func piped(command: String, label: String?) -> (Int, String, String) {
         let prefix = label ?? command
         var stdout = String()
         var stderr = String()
-
+        
+        var redir = Redir()
+        
         if label != nil {
             print("\(label!): ".green + command.bold.green)
         }
 
         let exitCode = ShellCommand.command(command: command, stdout: { line in
-            print("\(prefix): ".green + line)
+            print("\(prefix): ".green + line, to: &redir)
             stdout.append(line + "\n")
         }, stderr: { line in
-            print("\(prefix): ".red + line)
+            print("\(prefix): ".red + line, to: &redir)
             stderr.append(line + "\n")
         })
 
