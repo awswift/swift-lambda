@@ -5,7 +5,7 @@ class ShellCommandTests: XCTestCase {
     func testSimpleCommand() {
         var lines: [String] = []
 
-        let cmd = ShellCommand.command(command: "yes | head -n3", stdout: { line in
+        _ = ShellCommand.command(command: "yes | head -n3", stdout: { line in
             lines.append(line)
         }) { line in
             XCTFail("Should not receive any stderr from command")
