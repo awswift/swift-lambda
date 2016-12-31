@@ -1,4 +1,5 @@
 FROM awswift/swiftda
+RUN yum -y install libssl-devel
 WORKDIR /app
 RUN mkdir -p .build/debug
 RUN cp /usr/lib/swift/linux/*.so* .build/debug/

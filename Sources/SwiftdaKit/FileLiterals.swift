@@ -1,7 +1,7 @@
 struct FileLiterals {
     static let BuilderDockerfile = [
         "FROM awswift/swiftda",
-        "RUN apt-get install libssl-devel",
+        "RUN yum -y install libssl-devel",
         "WORKDIR /app",
         "RUN mkdir -p .build/debug",
         "RUN cp /usr/lib/swift/linux/*.so* .build/debug/",
