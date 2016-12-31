@@ -17,7 +17,7 @@ def literal_definition(path)
   str.read
 end
 
-out_path = File.expand_path '../Sources/FileLiterals.swift', __FILE__
+out_path = File.expand_path '../Sources/SwiftdaKit/FileLiterals.swift', __FILE__
 out = File.open(out_path, 'w')
 
 out.puts 'struct FileLiterals {'
