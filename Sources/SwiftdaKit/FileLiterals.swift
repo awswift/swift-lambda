@@ -111,7 +111,7 @@ struct FileLiterals {
         "let package = Package(",
         "    name: \"<name>\",",
         "    dependencies: [",
-        "        .Package(url: \"https://github.com/awswift/awswift\", majorVersion: 0, minor: 2)",
+        "        .Package(url: \"https://github.com/awswift/awswift\", majorVersion: 0, minor: 3)",
         "    ]",
         ")",
     ].joined(separator: "\n")
