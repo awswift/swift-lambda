@@ -3,6 +3,8 @@ import XCTest
 
 class EndToEndTests: XCTestCase {
     func testSimple() {
+        SetupCommand().command()
+        
         InitCommand().command(name: "e2e-test")
 
         let fm = FileManager.default
