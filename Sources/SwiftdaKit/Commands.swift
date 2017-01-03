@@ -221,7 +221,7 @@ class DestroyCommand {
 
 class SetupCommand {
     func command() {
-        let templateURL = URL(fileURLWithPath: ".swiftda/cloudformation-defaults.yml")
+        let templateURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("cloudformation-defaults.yml")!
         try! FileLiterals.InitialSetup.write(to: templateURL, atomically: true, encoding: .utf8)
         _ = ShellCommand.piped(command: "stackup swiftda-defaults up -t \(templateURL.path)", label: "cfn setup")
     }
