@@ -2,3 +2,5 @@
 /Packages
 /*.xcodeproj
 /gems
+/docs/_build
+/docs/_build_html
