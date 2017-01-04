@@ -10,32 +10,11 @@ Swiftda brings the power and ease-of-use of the Swift programming language
 to the scalability and buzzword-compliance of AWS Lambda. Use the tools you 
 already know and love to power the backend of your mobile application.
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-* :ref:`user-docs`
-* :ref:`dev-docs`
-
-.. _user-docs:
+Check out the <quickstart> to get up and running in a few minutes.
 
 .. toctree::
    :maxdepth: 2
    :caption: Overview
 
+   Quickstart <readme-symlink>
    required-iam-permissions
-
-.. _dev-docs:
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Dev Docs
-
-   required-iam-permissions
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
