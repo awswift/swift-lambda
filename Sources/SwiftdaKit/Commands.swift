@@ -14,21 +14,21 @@ func dockerfile() -> String {
 }
 
 class BuildCommand {
-    func command() {
+    func command() throws {
         let packageName = packageInfo()["name"].stringValue
 
-        _ = try! ShellCommand.piped(command: "mkdir -p .swiftda", label: nil)
+        _ = try ShellCommand.piped(command: "mkdir -p .swiftda", label: nil)
 
         let dockerfilePath = ".swiftda/Dockerfile"
-        try! dockerfile().write(toFile: dockerfilePath, atomically: true, encoding: .utf8)
-        try! FileLiterals.index.write(toFile: ".swiftda/index.js", atomically: true, encoding: .utf8)
+        try dockerfile().write(toFile: dockerfilePath, atomically: true, encoding: .utf8)
+        try FileLiterals.index.write(toFile: ".swiftda/index.js", atomically: true, encoding: .utf8)
 
         let imageId = "swiftda-builder-\(packageName):\(arc4random())"
         let containerId = "swiftda-\(packageName)-\(arc4random())"
         //    _ = ShellCommand.piped(command: "docker pull swiftda", label: "🐳 pull")
-        _ = try! ShellCommand.piped(command: "docker build -f \(dockerfilePath) -t \(imageId) .", label: "🐳 build")
-        _ = try! ShellCommand.piped(command: "docker run -i --name \(containerId) \(imageId) true", label: "🐳 container")
-        _ = try! ShellCommand.piped(command: "docker cp \(containerId):/app/lambda.zip \(packageName).lambda.zip", label: "copy zip")
+        _ = try ShellCommand.piped(command: "docker build -f \(dockerfilePath) -t \(imageId) .", label: "🐳 build")
+        _ = try ShellCommand.piped(command: "docker run -i --name \(containerId) \(imageId) true", label: "🐳 container")
+        _ = try ShellCommand.piped(command: "docker cp \(containerId):/app/lambda.zip \(packageName).lambda.zip", label: "copy zip")
     }
 }
 
@@ -99,26 +99,26 @@ struct CloudFormation {
      stackAction(action: action, name: name, template: template, parameters: parameters)
      }
      */
-    static func stackUp(name: String, template: URL, parameters: [String: String]) {
+    static func stackUp(name: String, template: URL, parameters: [String: String]) throws {
         let paramStr = parameters.reduce("") { result, tuple in "\(result) -o \(tuple.key)=\(tuple.value)" }
-        _ = try! ShellCommand.piped(command: "stackup \(name) up -t \(template.path) \(paramStr)", label: "cfn up")
+        _ = try ShellCommand.piped(command: "stackup \(name) up -t \(template.path) \(paramStr)", label: "cfn up")
     }
 
-    static func stackDown(name: String) {
-        _ = try! ShellCommand.piped(command: "stackup \(name) down", label: "cfn down")
+    static func stackDown(name: String) throws {
+        _ = try ShellCommand.piped(command: "stackup \(name) down", label: "cfn down")
     }
 
-    static func outputs(name: String) -> [String: String] {
+    static func outputs(name: String) throws -> [String: String] {
         let cmd = "aws cloudformation describe-stacks --stack-name \(name) --query Stacks[0].Outputs"
-        let (stdout, _) = try! ShellCommand.piped(command: cmd, label: "cfn outputs")
+        let (stdout, _) = try ShellCommand.piped(command: cmd, label: "cfn outputs")
         let json = JSON(data: stdout.data(using: .utf8)!)
         var outputs: [String: String] = [:]
         json.arrayValue.forEach { outputs[$0["OutputKey"].stringValue] = $0["OutputValue"].stringValue }
         return outputs
     }
 
-    static func exports() -> [String: String] {
-        let (stdout, _) = try! ShellCommand.piped(command: "aws cloudformation list-exports", label: "cfn vals")
+    static func exports() throws -> [String: String] {
+        let (stdout, _) = try ShellCommand.piped(command: "aws cloudformation list-exports", label: "cfn vals")
         let exportsJson = JSON(data: stdout.data(using: .utf8)!)["Exports"].arrayValue
         var exports: [String: String] = [:]
         exportsJson.forEach { exports[$0["Name"].stringValue] = $0["Value"].stringValue }
@@ -127,7 +127,7 @@ struct CloudFormation {
 }
 
 class DeployCommand {
-    func command(newVersion: Bool) {
+    func command(newVersion: Bool) throws {
         let config = Template.parseTemplateAtPath(".")!
 
         let zipUrl = URL(string: "\(config.name).lambda.zip", relativeTo: config.url)!
@@ -137,9 +137,9 @@ class DeployCommand {
             return
         }
 
-        _ = try! ShellCommand.piped(command: "aws s3 cp \(zipPath) s3://\(config.bucket)/\(config.key)", label: "s3 cp")
+        _ = try ShellCommand.piped(command: "aws s3 cp \(zipPath) s3://\(config.bucket)/\(config.key)", label: "s3 cp")
         let cmd = "aws s3api head-object --bucket \(config.bucket) --key \(config.key) --query VersionId --output text"
-        let (s3stdout, _) = try! ShellCommand.piped(command: cmd, label: "s3 ver")
+        let (s3stdout, _) = try ShellCommand.piped(command: cmd, label: "s3 ver")
         let s3version = s3stdout.trimmingCharacters(in: .newlines)
 
         let params = [
@@ -150,30 +150,30 @@ class DeployCommand {
         ]
 
         let templateURL = URL(fileURLWithPath: ".swiftda/cloudformation.yml")
-        try! FileLiterals.CloudFormation.write(to: templateURL, atomically: true, encoding: .utf8)
-        CloudFormation.stackUp(name: config.name, template: templateURL, parameters: params)
+        try FileLiterals.CloudFormation.write(to: templateURL, atomically: true, encoding: .utf8)
+        try CloudFormation.stackUp(name: config.name, template: templateURL, parameters: params)
     }
 }
 
 class InvokeCommand {
-    func command(async: Bool, local: Bool) {
-        let log = invoke(async: async, local: local)
+    func command(async: Bool, local: Bool) throws {
+        let log = try invoke(async: async, local: local)
         print(log)
     }
 
     // TODO: leaky because of unit testing?
-    func invoke(async: Bool, local: Bool) -> String {
+    func invoke(async: Bool, local: Bool) throws -> String {
         if async || local {
             fatalError("Not implemented yet")
         }
 
         let config = Template.parseTemplateAtPath(".")!
 
-        let stackOutputs = CloudFormation.outputs(name: config.name)
+        let stackOutputs = try CloudFormation.outputs(name: config.name)
         let functionName = stackOutputs["FunctionName"]!
 
         let cmd = "aws lambda invoke --function-name \(functionName) --log-type Tail /dev/null"
-        let (stdout, _) = try! ShellCommand.piped(command: cmd, label: "ƛ invoke")
+        let (stdout, _) = try ShellCommand.piped(command: cmd, label: "ƛ invoke")
         let json = JSON(data: stdout.data(using: .utf8)!)
         let logb64 = json["LogResult"].stringValue
         let logData = Data(base64Encoded: logb64, options: [])
@@ -182,10 +182,10 @@ class InvokeCommand {
 }
 
 class LogsCommand {
-    func command(tail: Bool) {
+    func command(tail: Bool) throws {
         let config = Template.parseTemplateAtPath(".")!
 
-        let stackOutputs = CloudFormation.outputs(name: config.name)
+        let stackOutputs = try CloudFormation.outputs(name: config.name)
         let functionName = stackOutputs["FunctionName"]!
         let group = "/aws/lambda/\(functionName)"
 
@@ -197,7 +197,7 @@ class LogsCommand {
             "--query logStreams[0].logStreamName",
             "--output text"
             ].joined(separator: " ")
-        let (stdout, _) = try! ShellCommand.piped(command: streamNameInvocation, label: "log stream name")
+        let (stdout, _) = try ShellCommand.piped(command: streamNameInvocation, label: "log stream name")
 
         let stream = stdout.trimmingCharacters(in: .newlines)
 
@@ -208,22 +208,22 @@ class LogsCommand {
             "--query events[*].message",
             "--output text"
             ].joined(separator: " ")
-        _ = try! ShellCommand.piped(command: logLinesInvocation, label: "log lines fetch")
+        _ = try ShellCommand.piped(command: logLinesInvocation, label: "log lines fetch")
     }
 }
 
 class DestroyCommand {
-    func command() {
+    func command() throws {
         let config = Template.parseTemplateAtPath(".")!
-        CloudFormation.stackDown(name: config.name)
+        try CloudFormation.stackDown(name: config.name)
     }
 }
 
 class SetupCommand {
-    func command() {
+    func command() throws {
         let templateURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("cloudformation-defaults.yml")!
-        try! FileLiterals.InitialSetup.write(to: templateURL, atomically: true, encoding: .utf8)
-        _ = try! ShellCommand.piped(command: "stackup swiftda-defaults up -t \(templateURL.path)", label: "cfn setup")
+        try FileLiterals.InitialSetup.write(to: templateURL, atomically: true, encoding: .utf8)
+        _ = try ShellCommand.piped(command: "stackup swiftda-defaults up -t \(templateURL.path)", label: "cfn setup")
     }
 }
 

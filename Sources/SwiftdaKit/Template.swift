@@ -29,7 +29,7 @@ struct Template {
         let raw = try! Data(contentsOf: url)
         let json = JSON(data: raw)
 
-        let defaults = CloudFormation.exports()
+        let defaults = try! CloudFormation.exports()
 
         if json["AWSTemplateFormatVersion"].string != nil {
             return Template(json: json, url: url, defaults: defaults)

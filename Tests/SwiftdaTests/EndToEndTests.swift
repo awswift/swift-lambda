@@ -2,8 +2,8 @@ import XCTest
 @testable import SwiftdaKit
 
 class EndToEndTests: XCTestCase {
-    func testSimple() {
-        SetupCommand().command()
+    func testSimple() throws {
+        try SetupCommand().command()
         
         InitCommand().command(name: "e2e-test")
 
@@ -18,13 +18,13 @@ class EndToEndTests: XCTestCase {
             try! fm.removeItem(atPath: lambdaDir)
         }
 
-        BuildCommand().command()
-        DeployCommand().command(newVersion: false)
+        try BuildCommand().command()
+        try DeployCommand().command(newVersion: false)
 
-        let output = InvokeCommand().invoke(async: false, local: false)
+        let output = try InvokeCommand().invoke(async: false, local: false)
         XCTAssert(output.range(of: "Hello, world!") != nil)
 
-        DestroyCommand().command()
+        try DestroyCommand().command()
     }
 
     static var allTests: [(String, (EndToEndTests) -> () throws -> Void)] {
