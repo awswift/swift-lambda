@@ -4,7 +4,7 @@ import Rainbow
 import SwiftyJSON
 
 func packageInfo() -> JSON {
-    let (_, stdout, _) = ShellCommand.piped(command: "swift package dump-package", label: "pkg info")
+    let (stdout, _) = try! ShellCommand.piped(command: "swift package dump-package", label: "pkg info")
     return JSON(data: stdout.data(using: .utf8)!)
 }
 
@@ -17,7 +17,7 @@ class BuildCommand {
     func command() {
         let packageName = packageInfo()["name"].stringValue
 
-        _ = ShellCommand.piped(command: "mkdir -p .swiftda", label: nil)
+        _ = try! ShellCommand.piped(command: "mkdir -p .swiftda", label: nil)
 
         let dockerfilePath = ".swiftda/Dockerfile"
         try! dockerfile().write(toFile: dockerfilePath, atomically: true, encoding: .utf8)
@@ -26,9 +26,9 @@ class BuildCommand {
         let imageId = "swiftda-builder-\(packageName):\(arc4random())"
         let containerId = "swiftda-\(packageName)-\(arc4random())"
         //    _ = ShellCommand.piped(command: "docker pull swiftda", label: "🐳 pull")
-        _ = ShellCommand.piped(command: "docker build -f \(dockerfilePath) -t \(imageId) .", label: "🐳 build")
-        _ = ShellCommand.piped(command: "docker run -i --name \(containerId) \(imageId) true", label: "🐳 container")
-        _ = ShellCommand.piped(command: "docker cp \(containerId):/app/lambda.zip \(packageName).lambda.zip", label: "copy zip")
+        _ = try! ShellCommand.piped(command: "docker build -f \(dockerfilePath) -t \(imageId) .", label: "🐳 build")
+        _ = try! ShellCommand.piped(command: "docker run -i --name \(containerId) \(imageId) true", label: "🐳 container")
+        _ = try! ShellCommand.piped(command: "docker cp \(containerId):/app/lambda.zip \(packageName).lambda.zip", label: "copy zip")
     }
 }
 
@@ -101,16 +101,16 @@ struct CloudFormation {
      */
     static func stackUp(name: String, template: URL, parameters: [String: String]) {
         let paramStr = parameters.reduce("") { result, tuple in "\(result) -o \(tuple.key)=\(tuple.value)" }
-        _ = ShellCommand.piped(command: "stackup \(name) up -t \(template.path) \(paramStr)", label: "cfn up")
+        _ = try! ShellCommand.piped(command: "stackup \(name) up -t \(template.path) \(paramStr)", label: "cfn up")
     }
 
     static func stackDown(name: String) {
-        _ = ShellCommand.piped(command: "stackup \(name) down", label: "cfn down")
+        _ = try! ShellCommand.piped(command: "stackup \(name) down", label: "cfn down")
     }
 
     static func outputs(name: String) -> [String: String] {
         let cmd = "aws cloudformation describe-stacks --stack-name \(name) --query Stacks[0].Outputs"
-        let (_, stdout, _) = ShellCommand.piped(command: cmd, label: "cfn outputs")
+        let (stdout, _) = try! ShellCommand.piped(command: cmd, label: "cfn outputs")
         let json = JSON(data: stdout.data(using: .utf8)!)
         var outputs: [String: String] = [:]
         json.arrayValue.forEach { outputs[$0["OutputKey"].stringValue] = $0["OutputValue"].stringValue }
@@ -118,7 +118,7 @@ struct CloudFormation {
     }
 
     static func exports() -> [String: String] {
-        let (_, stdout, _) = ShellCommand.piped(command: "aws cloudformation list-exports", label: "cfn vals")
+        let (stdout, _) = try! ShellCommand.piped(command: "aws cloudformation list-exports", label: "cfn vals")
         let exportsJson = JSON(data: stdout.data(using: .utf8)!)["Exports"].arrayValue
         var exports: [String: String] = [:]
         exportsJson.forEach { exports[$0["Name"].stringValue] = $0["Value"].stringValue }
@@ -137,9 +137,9 @@ class DeployCommand {
             return
         }
 
-        _ = ShellCommand.piped(command: "aws s3 cp \(zipPath) s3://\(config.bucket)/\(config.key)", label: "s3 cp")
+        _ = try! ShellCommand.piped(command: "aws s3 cp \(zipPath) s3://\(config.bucket)/\(config.key)", label: "s3 cp")
         let cmd = "aws s3api head-object --bucket \(config.bucket) --key \(config.key) --query VersionId --output text"
-        let (_, s3stdout, _) = ShellCommand.piped(command: cmd, label: "s3 ver")
+        let (s3stdout, _) = try! ShellCommand.piped(command: cmd, label: "s3 ver")
         let s3version = s3stdout.trimmingCharacters(in: .newlines)
 
         let params = [
@@ -173,7 +173,7 @@ class InvokeCommand {
         let functionName = stackOutputs["FunctionName"]!
 
         let cmd = "aws lambda invoke --function-name \(functionName) --log-type Tail /dev/null"
-        let (_, stdout, _) = ShellCommand.piped(command: cmd, label: "ƛ invoke")
+        let (stdout, _) = try! ShellCommand.piped(command: cmd, label: "ƛ invoke")
         let json = JSON(data: stdout.data(using: .utf8)!)
         let logb64 = json["LogResult"].stringValue
         let logData = Data(base64Encoded: logb64, options: [])
@@ -197,7 +197,7 @@ class LogsCommand {
             "--query logStreams[0].logStreamName",
             "--output text"
             ].joined(separator: " ")
-        let (_, stdout, _) = ShellCommand.piped(command: streamNameInvocation, label: "log stream name")
+        let (stdout, _) = try! ShellCommand.piped(command: streamNameInvocation, label: "log stream name")
 
         let stream = stdout.trimmingCharacters(in: .newlines)
 
@@ -208,7 +208,7 @@ class LogsCommand {
             "--query events[*].message",
             "--output text"
             ].joined(separator: " ")
-        _ = ShellCommand.piped(command: logLinesInvocation, label: "log lines fetch")
+        _ = try! ShellCommand.piped(command: logLinesInvocation, label: "log lines fetch")
     }
 }
 
@@ -223,7 +223,7 @@ class SetupCommand {
     func command() {
         let templateURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("cloudformation-defaults.yml")!
         try! FileLiterals.InitialSetup.write(to: templateURL, atomically: true, encoding: .utf8)
-        _ = ShellCommand.piped(command: "stackup swiftda-defaults up -t \(templateURL.path)", label: "cfn setup")
+        _ = try! ShellCommand.piped(command: "stackup swiftda-defaults up -t \(templateURL.path)", label: "cfn setup")
     }
 }
 

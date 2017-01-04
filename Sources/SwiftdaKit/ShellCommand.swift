@@ -1,6 +1,13 @@
 import Foundation
 
 struct ShellCommand {
+    struct ShellCommandFailure: Error {
+        let command: String
+        let stdout: String
+        let stderr: String
+        let exitCode: Int
+    }
+    
     static func command(command: String, stdout: @escaping (_: String) -> Void, stderr: @escaping (_: String) -> Void) -> Int {
         #if os(Linux)
             let buildProcess = Task()
@@ -59,7 +66,7 @@ struct ShellCommand {
         }
     }
 
-    static func piped(command: String, label: String?) -> (Int, String, String) {
+    static func piped(command: String, label: String?) throws -> (String, String) {
         let prefix = label ?? command
         var stdout = String()
         var stderr = String()
@@ -78,6 +85,11 @@ struct ShellCommand {
             stderr.append(line + "\n")
         })
 
-        return (exitCode, stdout, stderr)
+        if exitCode == 0 {
+            return (stdout, stderr)
+        } else {
+            throw ShellCommandFailure(command: command, stdout: stdout, stderr: stderr, exitCode: exitCode)
+        }
+        
     }
 }
