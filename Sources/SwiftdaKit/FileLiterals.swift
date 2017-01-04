@@ -1,6 +1,6 @@
 struct FileLiterals {
     static let BuilderDockerfile = [
-        "FROM awswift/swiftda",
+        "FROM awswift/swiftda:0.1",
         "RUN yum -y install openssl-devel",
         "WORKDIR /app",
         "RUN mkdir -p .build/debug",
@@ -111,7 +111,7 @@ struct FileLiterals {
         "let package = Package(",
         "    name: \"<name>\",",
         "    dependencies: [",
-        "        .Package(url: \"https://github.com/awswift/awswift\", majorVersion: 0)",
+        "        // .Package(url: \"https://github.com/awswift/awswift\", majorVersion: 0, minor: 3)",
         "    ]",
         ")",
     ].joined(separator: "\n")

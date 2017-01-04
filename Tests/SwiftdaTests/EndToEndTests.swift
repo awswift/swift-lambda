@@ -2,7 +2,9 @@ import XCTest
 @testable import SwiftdaKit
 
 class EndToEndTests: XCTestCase {
-    func no_testSimple() {
+    func testSimple() {
+        SetupCommand().command()
+        
         InitCommand().command(name: "e2e-test")
 
         let fm = FileManager.default
