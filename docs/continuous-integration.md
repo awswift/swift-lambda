@@ -8,9 +8,9 @@ checks run against them. The results of these tests are posted to GitHub on thei
 respective PR threads, but are also available [directly on Jenkins][jenkins-prs].
 
 The CI process that is run against each commit is defined in the Swiftda repo
-itself in the [`Jenkinsfile`][jenkinsfile] in the root of the repo. Here you can
+itself in the [Jenkinsfile][jenkinsfile] in the root of the repo. Here you can
 also see the battery of checks that each PR is subjected to. Essentially if
-[`swiftlint`][swiftlint] reports any style issues, `xcodebuild` has any build
+[swiftlint][swiftlint] reports any style issues, `xcodebuild` has any build
 warnings (or errors!) or `swift test` is unhappy the Awswift bot will let you
 know via the PR thread on GitHub.
 
