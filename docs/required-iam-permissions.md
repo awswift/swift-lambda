@@ -1,4 +1,4 @@
-# Required IAM Permissions
+# Required IAM permissions
 
 In order to operate correctly, Swiftda needs permission to access certain AWS APIs
 on your behalf. If you're a solo dev and you've set up the [AWS CLI][aws-cli] using
