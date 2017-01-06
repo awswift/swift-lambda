@@ -1,10 +1,7 @@
 import Foundation
+import SwiftdaRuntime
 
-let inputData = FileHandle.standardInput.readDataToEndOfFile()
-let json = try! JSONSerialization.jsonObject(with: inputData, options: []) as! [String: Any]
-
-var copy = json
-copy["output"] = "Hello, world!"
-
-let outputData = try! JSONSerialization.data(withJSONObject: copy, options: [])
-FileHandle.standardOutput.write(outputData)
+SwiftdaRuntime.run { event, context in
+    let name = event["name"] ?? "World" 
+    return ["output": "Hello, \(name)"]
+}

@@ -94,15 +94,12 @@ struct FileLiterals {
 
     static let InitFiles_main = [
         "import Foundation",
+        "import SwiftdaRuntime",
         "",
-        "let inputData = FileHandle.standardInput.readDataToEndOfFile()",
-        "let json = try! JSONSerialization.jsonObject(with: inputData, options: []) as! [String: Any]",
-        "",
-        "var copy = json",
-        "copy[\"output\"] = \"Hello, world!\"",
-        "",
-        "let outputData = try! JSONSerialization.data(withJSONObject: copy, options: [])",
-        "FileHandle.standardOutput.write(outputData)",
+        "SwiftdaRuntime.run { event, context in",
+        "    let name = event[\"name\"] ?? \"World\" ",
+        "    return [\"output\": \"Hello, \(name)\"]",
+        "}",
     ].joined(separator: "\n")
 
     static let InitFiles_Package = [
@@ -112,6 +109,7 @@ struct FileLiterals {
         "    name: \"<name>\",",
         "    dependencies: [",
         "        // .Package(url: \"https://github.com/awswift/awswift\", majorVersion: 0, minor: 3)",
+        "        .Package(url: \"https://github.com/awswift/swiftda-runtime\", majorVersion: 0, minor: 1)",
         "    ]",
         ")",
     ].joined(separator: "\n")
