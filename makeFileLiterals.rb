@@ -8,7 +8,7 @@ def literal_definition(path)
   str.puts "    static let #{name} = ["
   File.readlines("FileLiterals/#{path}").each do |line|
     without_nl = line[0..-2]
-    escaped = without_nl.gsub('"', '\"').gsub('\\', '\\\\')
+    escaped = without_nl.gsub('\\', '\\\\\\\\').gsub('"', '\"')
     str.puts "        \"#{escaped}\","
   end
   str.puts '    ].joined(separator: "\n")'

@@ -98,7 +98,7 @@ struct FileLiterals {
         "",
         "SwiftdaRuntime.run { event, context in",
         "    let name = event[\"name\"] ?? \"World\" ",
-        "    return [\"output\": \"Hello, \(name)\"]",
+        "    return [\"output\": \"Hello, \\(name)\"]",
         "}",
     ].joined(separator: "\n")
 
