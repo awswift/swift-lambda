@@ -120,7 +120,10 @@ conventions. It can be as simple as:
 import PackageDescription
 
 let package = Package(
-    name: "lambdaface"
+    name: "lambdaface",
+    dependencies: [
+        .Package(url: "https://github.com/awswift/swiftda-runtime", majorVersion: 0, minor: 1)
+    ]
 )
 ```
 
@@ -132,13 +135,10 @@ returns JSON on stdout. An example file would be:
 
 ```swift
 import Foundation
+import SwiftdaRuntime
 
-let inputData = FileHandle.standardInput.readDataToEndOfFile()
-let json = try! JSONSerialization.jsonObject(with: inputData, options: []) as! [String: String]
-
-let name = json["username"]!
-let outputJson = ["output": "Hello \(name)!"]
-
-let outputData = try! JSONSerialization.data(withJSONObject: outputJson, options: [])
-FileHandle.standardOutput.write(outputData)
+SwiftdaRuntime.run { event, context in
+    let name = event["name"] ?? "World" 
+    return ["output": "Hello, \(name)"]
+}
 ```
