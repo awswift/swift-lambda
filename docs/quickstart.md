@@ -52,7 +52,7 @@ files that Lambda requires you to have.
 
 ### `sw deploy [--new-version]`
 
-`upload` is how you get the Zip file from the previous command onto Lambda 
+`deploy` is how you get the Zip file from the previous command onto Lambda 
 itself. You could upload the zip using the AWS web console, but we provide 
 this convenience helper so you can iterate on your code as quickly as you 
 can type.
