@@ -127,7 +127,7 @@ let package = Package(
 )
 ```
 
-[swiftpm]: https://swift.org/package-manager/
+[swift-pm]: https://swift.org/package-manager/
 
 Finally, the last required piece is `Sources/main.swift`. This is the entrypoint 
 to the Swift executable that Swiftda will call. An example file would be:
