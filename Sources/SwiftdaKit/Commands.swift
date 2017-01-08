@@ -15,12 +15,20 @@ func dockerfile() -> String {
 
 class BuildCommand {
     func command() throws {
-        let packageName = packageInfo()["name"].stringValue
-
         _ = try ShellCommand.piped(command: "mkdir -p .swiftda", label: nil)
 
         let dockerfilePath = ".swiftda/Dockerfile"
-        try dockerfile().write(toFile: dockerfilePath, atomically: true, encoding: .utf8)
+        var dockerfile = FileLiterals.BuilderDockerfile
+        
+        let packageName = packageInfo()["name"].stringValue
+        dockerfile = dockerfile.replacingOccurrences(of: "<packageName>", with: packageName)
+        
+        let template = Template.parseTemplateAtPath(".")!
+        let yumDeps = template.yumDependencies.sorted()
+        let yumReplacement = yumDeps.count > 0 ? "RUN yum -y install \(yumDeps.joined(separator: " "))" : ""
+        dockerfile = dockerfile.replacingOccurrences(of: "<yumDependencies>", with: yumReplacement)
+        
+        try dockerfile.write(toFile: dockerfilePath, atomically: true, encoding: .utf8)
         try FileLiterals.index.write(toFile: ".swiftda/index.js", atomically: true, encoding: .utf8)
 
         let imageId = "swiftda-builder-\(packageName):\(arc4random())"

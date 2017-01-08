@@ -68,6 +68,10 @@ struct Template {
     var timeout: String {
         return json["Metadata"]["Timeout"].stringValue
     }
+    
+    var yumDependencies: [String] {
+        return (json["Metadata"]["YumDependencies"].array ?? []).map { $0.stringValue }
+    }
 
     func write(to url: URL) {
         let data = try! json.rawData(options: .prettyPrinted)
