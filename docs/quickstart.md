@@ -57,10 +57,6 @@ itself. You could upload the zip using the AWS web console, but we provide
 this convenience helper so you can iterate on your code as quickly as you 
 can type.
 
-`deploy` is powered by AWS [CloudFormation](https://aws.amazon.com/cloudformation/). 
-CloudFormation is Amazon's "infrastructure as code" offering and allows us 
-to describe our Lambda infrastructure declaratively.
-
 ~~`--new-version` lets you take advantage of AWS Lambda [function versioning][fn-ver]. 
 It will increment your function's version number with this latest upload.~~
 

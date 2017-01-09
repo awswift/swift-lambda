@@ -17,6 +17,7 @@ Check out the Quickstart to get up and running in a few minutes.
    :caption: Overview
 
    quickstart
+   manifest
    required-iam-permissions
 
 .. _dev-docs:
