@@ -22,7 +22,7 @@ class EndToEndTests: XCTestCase {
         try DeployCommand().command(newVersion: false)
 
         let output = try InvokeCommand().invoke(async: false, local: false)
-        XCTAssert(output.range(of: "Hello, World") != nil)
+        XCTAssert(output.tail.range(of: "Hello, World") != nil)
 
         try DestroyCommand().command()
     }

@@ -97,14 +97,38 @@ class DeployCommand {
     }
 }
 
+extension String {
+    func extractRegexFields(regex: NSRegularExpression) -> [String] {
+        let match = regex.firstMatch(in: self, options: [], range: NSRange(location: 0, length: self.characters.count))!
+        let range = 0..<match.numberOfRanges
+        return range.map { idx in
+            let range = match.rangeAt(idx)
+            return (self as NSString).substring(with: range)
+        }
+
+    }
+}
+
 class InvokeCommand {
+    struct InvokeResponse {
+        let tail: String
+        let elapsed: String
+        let billed: String
+        let memory: String
+        let usedMemory: String
+    }
+    
     func command(async: Bool, local: Bool) throws {
-        let log = try invoke(async: async, local: local)
-        print(log)
+        let resp = try invoke(async: async, local: local)
+        print(resp.tail)
+        print("\("Elapsed : ".green.bold) \(resp.elapsed)")
+        print("\("Billed  : ".green.bold) \(resp.billed)")
+        print("\("Memory  : ".green.bold) \(resp.memory)")
+        print("\("Used Mem: ".green.bold) \(resp.usedMemory)")
     }
 
     // TODO: leaky because of unit testing?
-    func invoke(async: Bool, local: Bool) throws -> String {
+    func invoke(async: Bool, local: Bool) throws -> InvokeResponse {
         if async || local {
             fatalError("Not implemented yet")
         }
@@ -119,7 +143,12 @@ class InvokeCommand {
         let json = JSON(data: stdout.data(using: .utf8)!)
         let logb64 = json["LogResult"].stringValue
         let logData = Data(base64Encoded: logb64, options: [])
-        return String(data: logData!, encoding: .utf8)!
+        let logString = String(data: logData!, encoding: .utf8)!
+        
+        let regex = try NSRegularExpression(pattern: "REPORT RequestId: (\\S+)\\s+Duration: (\\d*\\.\\d\\d ms)\\s+Billed Duration: (\\d+ ms)\\s+Memory Size: (\\d+ MB)\\s+Max Memory Used: (\\d+ MB)", options: [])
+        let extracted = logString.extractRegexFields(regex: regex)
+        
+        return InvokeResponse(tail: logString, elapsed: extracted[2], billed: extracted[3], memory: extracted[4], usedMemory: extracted[5])
     }
 }
 
