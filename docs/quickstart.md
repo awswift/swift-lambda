@@ -4,26 +4,32 @@ Swiftda brings the power and ease-of-use of the Swift programming language
 to the scalability and buzzword-compliance of AWS Lambda. Use the tools you 
 already know and love to power the backend of your mobile application.
 
+## Installation
+
+Swiftda can be installed using [Homebrew](http://brew.sh):
+
+    $ brew install --HEAD awswift/swiftda/swiftda
+
 ## Pre-requisites
 
 * A Swift programming environment. On macOS, this means installing Xcode. On 
-Linux, it means downloading Swift from the official website.
+  Linux, it means downloading Swift from the official website.
 
 * Docker. We use Docker to emulate a local version of the Linux-y AWS Lambda 
-runtime environment. Because Swift compiles to native code, we need to compile 
-the code on a computer that is as similar to Lambda as possible. 
+  runtime environment. Because Swift compiles to native code, we need to compile 
+  the code on a computer that is as similar to Lambda as possible. 
 
   Note that this is still needed even if you are running on Ubuntu, because 
   Lambda is different enough from Ubuntu that compiling on your own machine 
   won't work.
 
 * **Interim**: The [AWS CLI](https://aws.amazon.com/cli/). Porting the AWS APIs 
-is still a work in progress in the `awswift/Awswift` repo. Until that is complete 
-we have relied on shelling out to the CLI tool for the alpha release.
+  is still a work in progress in the `awswift/Awswift` repo. Until that is complete 
+  we have relied on shelling out to the CLI tool for the alpha release.
 
 * **Interim**: The [`stackup`](https://github.com/realestate-com-au/stackup) Ruby 
-gem. This is a great utility for dealing with CloudFormation and we are shelling 
-out to it until such functionality has been replicated in a Swift library.
+  gem. This is a great utility for dealing with CloudFormation and we are shelling 
+  out to it until such functionality has been replicated in a Swift library.
 
 ## Usage
 
