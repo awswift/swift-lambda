@@ -33,7 +33,7 @@ Swiftda can be installed using [Homebrew](http://brew.sh):
 
 ## Usage
 
-### `sw setup`
+### `swiftda setup`
 
 `setup` is a once-off command that will get an AWS account ready for Swift-powered 
 AWS Lambda functions. Right now it creates an S3 bucket for storing your code and
@@ -42,21 +42,21 @@ to write logs.
 
 [iam-exec-role]: http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role
 
-### `sw init <name>`
+### `swiftda init <name>`
 
 `init` will initialise a brand-new _Hello, World!_ Swift-powered AWS Lambda 
 function. Everything you need to get up and running will be created for you. 
 `<name>` is how you tell the `init` command what you want your function to 
 be called!
 
-### `sw build`
+### `swiftda build`
 
 `build` will create the Zip archive that you upload to AWS Lambda in order 
 to run your code. Swiftda will compile your code in a Lambda-like Docker 
 container, zip it up (alongside the Swift runtime) and stick in a few extra 
 files that Lambda requires you to have. 
 
-### `sw deploy [--new-version]`
+### `swiftda deploy [--new-version]`
 
 `deploy` is how you get the Zip file from the previous command onto Lambda 
 itself. You could upload the zip using the AWS web console, but we provide 
@@ -68,7 +68,7 @@ It will increment your function's version number with this latest upload.~~
 
 [fn-ver]: http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html
 
-### `sw logs [--tail]`
+### `swiftda logs [--tail]`
 
 `logs` allows you to see everything you `print()` in your Lambda function from 
 the comfort of your terminal. This can be invaluable while debugging to see 
@@ -76,18 +76,18 @@ what is going on.
 
 `--tail` will output log lines to your terminal as they happen in real-time.
 
-### `sw destroy`
+### `swiftda destroy`
 
 `destroy` deletes all artifacts of your Lambda function on AWS. Maybe you're 
 done with a dev version of your code and ready to start a new project - 
 stop paying for storage and cluttering up your Lambda web console.
 
-### `sw debug`
+### `swiftda debug`
 
 `debug` allows you to step through your Lambda function from within Xcode, 
 as if you were running it locally.
 
-### `sw invoke [--async] [--local]`
+### `swiftda invoke [--async] [--local]`
 
 `invoke` will execute your Lambda function and return its output to your 
 terminal.
