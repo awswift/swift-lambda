@@ -1,8 +1,8 @@
-# Swiftda.json manifest
+# swift-lambda.json manifest
 
-Projects utilising the Swiftda project include a `Swiftda.json` manifest file
+Projects utilising the swift-lambda project include a `swift-lambda.json` manifest file
 in their root directory alongside SwiftPM's `Package.swift`. This file is
-mandatory and includes information that Swiftda needs in order to successfully
+mandatory and includes information that swift-lambda needs in order to successfully
 deploy your function to AWS Lambda.
 
 ## Basic
@@ -47,7 +47,7 @@ CloudFormation allows you to describe database tables, push notification topics,
 S3 file upload buckets and any other AWS resources you might need in addition
 to your Lambda function to support your mobile application.
 
-Here is an example of a CloudFormation Swiftda manifest file:
+Here is an example of a CloudFormation swift-lambda manifest file:
 
 ```json
 {

@@ -1,0 +1,3 @@
+import SwiftLambdaKit
+
+MainCommand.run()

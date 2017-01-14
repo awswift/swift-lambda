@@ -1,7 +1,7 @@
-# Swiftda
+# swift-lambda
 
-[![Build Status](https://jenkins.awswift.ge.cx/buildStatus/icon?job=awswift/swiftda/master)](https://jenkins.awswift.ge.cx/job/awswift/job/swiftda/job/master/)
-[![Documentation Status](https://readthedocs.org/projects/swiftda/badge/?version=latest)](http://swiftda.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://jenkins.awswift.ge.cx/buildStatus/icon?job=awswift/swift-lambda/master)](https://jenkins.awswift.ge.cx/job/awswift/job/swift-lambda/job/master/)
+[![Documentation Status](https://readthedocs.org/projects/swift-lambda/badge/?version=latest)](http://swift-lambda.readthedocs.io/en/latest/?badge=latest)
 
 
-See the docs at [swiftda.readthedocs.io](https://swiftda.readthedocs.io/en/latest/).
+See the docs at [swift-lambda.readthedocs.io](https://swift-lambda.readthedocs.io/en/latest/).

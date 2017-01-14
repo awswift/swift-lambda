@@ -1,5 +1,5 @@
 import XCTest
-@testable import SwiftdaKit
+@testable import SwiftLambdaKit
 
 class LineChunkerTests: XCTestCase {
     func testLinePerChunk() {

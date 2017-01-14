@@ -2,7 +2,7 @@
 
 def literal_definition(path)
   str = StringIO.new
-  name = path.gsub('/', '_').chomp File.extname(path)
+  name = path.gsub(%r{[/\-]}, '_').chomp File.extname(path)
   # name = File.basename path, File.extname(path)
 
   str.puts "    static let #{name} = ["
@@ -17,7 +17,7 @@ def literal_definition(path)
   str.read
 end
 
-out_path = File.expand_path '../Sources/SwiftdaKit/FileLiterals.swift', __FILE__
+out_path = File.expand_path '../Sources/SwiftLambdaKit/FileLiterals.swift', __FILE__
 out = File.open(out_path, 'w')
 
 out.puts 'struct FileLiterals {'

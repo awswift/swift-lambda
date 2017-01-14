@@ -21,7 +21,7 @@ struct ShellCommand {
         let outChunker = LineChunker { stdout($0) }
         let out = Pipe()
 
-        let queue = DispatchQueue(label: "swiftda.shellcommand.queue")
+        let queue = DispatchQueue(label: "SwiftLambda.shellcommand.queue")
         let sema = DispatchSemaphore(value: 0)
 
         buildProcess.standardOutput = out

@@ -4,7 +4,7 @@ struct FileLiterals {
         "WORKDIR /app",
         "RUN mkdir -p .build/debug",
         "RUN cp /usr/lib/swift/linux/*.so* .build/debug/",
-        "COPY .swiftda/index.js .build/debug/",
+        "COPY .swift-lambda/index.js .build/debug/",
         "RUN cd .build/debug && zip /app/lambda.zip *.so* index.js",
         "<yumDependencies>",
         "COPY Package.swift .",
@@ -12,8 +12,8 @@ struct FileLiterals {
         "COPY . .",
         "RUN swift build",
         "WORKDIR .build/debug",
-        "RUN mv <packageName> swiftdaEntrypoint",
-        "RUN zip /app/lambda.zip swiftdaEntrypoint",
+        "RUN mv <packageName> swiftLambdaEntrypoint",
+        "RUN zip /app/lambda.zip swiftLambdaEntrypoint",
     ].joined(separator: "\n")
 
     static let CloudFormation = [
@@ -76,7 +76,7 @@ struct FileLiterals {
         "    process.env['LD_LIBRARY_PATH'] = process.env['LAMBDA_TASK_ROOT'];",
         "",
         "    let input = { event: event, context: context };",
-        "    let child = childProcess.spawnSync('./swiftdaEntrypoint', [], {",
+        "    let child = childProcess.spawnSync('./swiftLambdaEntrypoint', [], {",
         "        input: JSON.stringify(input)",
         "    });",
         "",
@@ -94,9 +94,9 @@ struct FileLiterals {
 
     static let InitFiles_main = [
         "import Foundation",
-        "import SwiftdaRuntime",
+        "import SwiftLambdaRuntime",
         "",
-        "SwiftdaRuntime().run { event, context, callback in",
+        "SwiftLambdaRuntime().run { event, context, callback in",
         "    let name = event[\"name\"] ?? \"World\" ",
         "    callback([\"output\": \"Hello, \\(name)\"])",
         "}",
@@ -109,12 +109,12 @@ struct FileLiterals {
         "    name: \"<name>\",",
         "    dependencies: [",
         "        // .Package(url: \"https://github.com/awswift/awswift\", majorVersion: 0, minor: 3)",
-        "        .Package(url: \"https://github.com/awswift/swiftda-runtime\", majorVersion: 0, minor: 1)",
+        "        .Package(url: \"https://github.com/awswift/swift-lambda-runtime\", majorVersion: 0, minor: 1)",
         "    ]",
         ")",
     ].joined(separator: "\n")
 
-    static let InitFiles_Swiftda = [
+    static let InitFiles_swift_lambda = [
         "{",
         "    \"Name\": \"<name>\",",
         "    \"Description\": \"\",",
@@ -149,15 +149,15 @@ struct FileLiterals {
         "",
         "Outputs:",
         "  CodeStorageBucket:",
-        "    Description: Default bucket for Swiftda-managed functions",
+        "    Description: Default bucket for swift-lambda-managed functions",
         "    Value: !Ref CodeStorageBucket",
         "    Export:",
-        "      Name: SwiftdaCodeStorageBucket",
+        "      Name: SwiftLambdaCodeStorageBucket",
         "  ExecutionRoleArn:",
-        "    Description: ARN of default Lambda execution role for Swiftda-managed functions",
+        "    Description: ARN of default Lambda execution role for swift-lambda-managed functions",
         "    Value: !GetAtt ExecutionRole.Arn",
         "    Export:",
-        "      Name: SwiftdaExecutionRoleArn",
+        "      Name: SwiftLambdaExecutionRoleArn",
     ].joined(separator: "\n")
 
 }

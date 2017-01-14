@@ -6,7 +6,7 @@ exports.handler = function(event, context, callback) {
     process.env['LD_LIBRARY_PATH'] = process.env['LAMBDA_TASK_ROOT'];
 
     let input = { event: event, context: context };
-    let child = childProcess.spawnSync('./swiftdaEntrypoint', [], {
+    let child = childProcess.spawnSync('./swiftLambdaEntrypoint', [], {
         input: JSON.stringify(input)
     });
 

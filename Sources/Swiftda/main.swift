@@ -1,3 +1,0 @@
-import SwiftdaKit
-
-MainCommand.run()

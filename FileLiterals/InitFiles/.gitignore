@@ -1,5 +1,5 @@
 .DS_Store
-/.swiftda
+/.swift-lambda
 /.build
 /Packages
 /*.xcodeproj

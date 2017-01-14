@@ -14,7 +14,7 @@ struct Template {
 
         let configPath: String
         if isDir.boolValue {
-            configPath = (path as NSString).appendingPathComponent("Swiftda.json")
+            configPath = (path as NSString).appendingPathComponent("swift-lambda.json")
         } else {
             configPath = path
         }
@@ -46,11 +46,11 @@ struct Template {
     }
 
     var role: String {
-        return json["Metadata"]["Role"].string ?? defaults["SwiftdaExecutionRoleArn"]!
+        return json["Metadata"]["Role"].string ?? defaults["SwiftLambdaExecutionRoleArn"]!
     }
 
     var bucket: String {
-        return json["Metadata"]["Bucket"].string ?? defaults["SwiftdaCodeStorageBucket"]!
+        return json["Metadata"]["Bucket"].string ?? defaults["SwiftLambdaCodeStorageBucket"]!
     }
 
     var key: String {

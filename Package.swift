@@ -1,10 +1,10 @@
 import PackageDescription
 
 let package = Package(
-    name: "Swiftda",
+    name: "SwiftLambda",
     targets: [
-        Target(name: "SwiftdaKit"),
-        Target(name: "Swiftda", dependencies: ["SwiftdaKit"])
+        Target(name: "SwiftLambdaKit"),
+        Target(name: "SwiftLambda", dependencies: ["SwiftLambdaKit"])
     ],
     dependencies: [
         .Package(url: "https://github.com/kylef/Commander", majorVersion: 0, minor: 5),

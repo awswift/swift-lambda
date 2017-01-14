@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Swiftda documentation build configuration file, created by
+# swift-lambda documentation build configuration file, created by
 # sphinx-quickstart on Wed Jan  4 14:29:38 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -50,9 +50,9 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # General information about the project.
-project = u'Swiftda'
-copyright = u'2017, Swiftda team'
-author = u'Swiftda team'
+project = u'swift-lambda'
+copyright = u'2017, swift-lambda team'
+author = u'swift-lambda team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -114,7 +114,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Swiftdadoc'
+htmlhelp_basename = 'swift-lambdadoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -141,8 +141,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Swiftda.tex', u'Swiftda Documentation',
-     u'Swiftda team', 'manual'),
+    (master_doc, 'swift-lambda.tex', u'swift-lambda Documentation',
+     u'swift-lambda team', 'manual'),
 ]
 
 
@@ -151,7 +151,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'swiftda', u'Swiftda Documentation',
+    (master_doc, 'swift-lambda', u'swift-lambda Documentation',
      [author], 1)
 ]
 
@@ -162,8 +162,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Swiftda', u'Swiftda Documentation',
-     author, 'Swiftda', 'One line description of project.',
+    (master_doc, 'swift-lambda', u'swift-lambda Documentation',
+     author, 'swift-lambda', 'One line description of project.',
      'Miscellaneous'),
 ]
 

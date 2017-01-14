@@ -16,7 +16,7 @@ def doit() {
         sh 'bundle'
         sh 'swift package generate-xcodeproj'
         try {
-            sh 'xcodebuild -target Swiftda | bundle exec xcpretty -f `bundle exec xcpretty-json-formatter` && exit ${PIPESTATUS[0]}'
+            sh 'xcodebuild -target SwiftLambda | bundle exec xcpretty -f `bundle exec xcpretty-json-formatter` && exit ${PIPESTATUS[0]}'
         } finally {
             checks('Shared/xcpretty.js')
         }

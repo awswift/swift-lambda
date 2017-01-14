@@ -15,9 +15,9 @@ func dockerfile() -> String {
 
 class BuildCommand {
     func command() throws {
-        _ = try ShellCommand.piped(command: "mkdir -p .swiftda", label: nil)
+        _ = try ShellCommand.piped(command: "mkdir -p .swift-lambda", label: nil)
 
-        let dockerfilePath = ".swiftda/Dockerfile"
+        let dockerfilePath = ".swift-lambda/Dockerfile"
         var dockerfile = FileLiterals.BuilderDockerfile
         
         let packageName = packageInfo()["name"].stringValue
@@ -29,11 +29,11 @@ class BuildCommand {
         dockerfile = dockerfile.replacingOccurrences(of: "<yumDependencies>", with: yumReplacement)
         
         try dockerfile.write(toFile: dockerfilePath, atomically: true, encoding: .utf8)
-        try FileLiterals.index.write(toFile: ".swiftda/index.js", atomically: true, encoding: .utf8)
+        try FileLiterals.index.write(toFile: ".swift-lambda/index.js", atomically: true, encoding: .utf8)
 
-        let imageId = "swiftda-builder-\(packageName):\(arc4random())"
-        let containerId = "swiftda-\(packageName)-\(arc4random())"
-        //    _ = ShellCommand.piped(command: "docker pull swiftda", label: "🐳 pull")
+        let imageId = "swift-lambda-builder-\(packageName):\(arc4random())"
+        let containerId = "swift-lambda-\(packageName)-\(arc4random())"
+        //    _ = ShellCommand.piped(command: "docker pull swift-lambda", label: "🐳 pull")
         _ = try ShellCommand.piped(command: "docker build -f \(dockerfilePath) -t \(imageId) .", label: "🐳 build")
         _ = try ShellCommand.piped(command: "docker run -i --name \(containerId) \(imageId) true", label: "🐳 container")
         _ = try ShellCommand.piped(command: "docker cp \(containerId):/app/lambda.zip \(packageName).lambda.zip", label: "copy zip")
@@ -91,7 +91,7 @@ class DeployCommand {
             "Role": config.role
         ]
 
-        let templateURL = URL(fileURLWithPath: ".swiftda/cloudformation.yml")
+        let templateURL = URL(fileURLWithPath: ".swift-lambda/cloudformation.yml")
         try FileLiterals.CloudFormation.write(to: templateURL, atomically: true, encoding: .utf8)
         try CloudFormation.stackUp(name: config.name, template: templateURL, parameters: params)
     }
@@ -194,7 +194,7 @@ class SetupCommand {
     func command() throws {
         let templateURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("cloudformation-defaults.yml")!
         try FileLiterals.InitialSetup.write(to: templateURL, atomically: true, encoding: .utf8)
-        _ = try ShellCommand.piped(command: "stackup swiftda-defaults up -t \(templateURL.path)", label: "cfn setup")
+        _ = try ShellCommand.piped(command: "stackup swift-lambda-defaults up -t \(templateURL.path)", label: "cfn setup")
     }
 }
 
@@ -213,8 +213,8 @@ class InitCommand {
             let packageStr = FileLiterals.InitFiles_Package.replacingOccurrences(of: "<name>", with: name)
             try packageStr.write(to: dir.appendingPathComponent("Package.swift"), atomically: true, encoding: .utf8)
 
-            let swiftdaStr = FileLiterals.InitFiles_Swiftda.replacingOccurrences(of: "<name>", with: name)
-            try swiftdaStr.write(to: dir.appendingPathComponent("Swiftda.json"), atomically: true, encoding: .utf8)
+            let SwiftLambdaStr = FileLiterals.InitFiles_swift_lambda.replacingOccurrences(of: "<name>", with: name)
+            try SwiftLambdaStr.write(to: dir.appendingPathComponent("swift-lambda.json"), atomically: true, encoding: .utf8)
 
             try FileLiterals.InitFiles_main.write(to: dir.appendingPathComponent("Sources/main.swift"), atomically: true, encoding: .utf8)
             try FileLiterals.InitFiles_dockerignore.write(to: dir.appendingPathComponent(".dockerignore"), atomically: true, encoding: .utf8)

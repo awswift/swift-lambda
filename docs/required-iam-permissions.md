@@ -1,15 +1,15 @@
 # Required IAM permissions
 
-In order to operate correctly, Swiftda needs permission to access certain AWS APIs
+In order to operate correctly, swift-lambda needs permission to access certain AWS APIs
 on your behalf. If you're a solo dev and you've set up the [AWS CLI][aws-cli] using
-`aws configure`, you will have unlimited access and running Swiftda from the terminal 
+`aws configure`, you will have unlimited access and running swift-lambda from the terminal 
 should work just fine. 
 
-However, if Swiftda is running on a CI machine or your AWS access has been granted 
+However, if swift-lambda is running on a CI machine or your AWS access has been granted 
 by your company's AWS gurus, your access may be restricted. In order to operate
-fully, Swiftda requires the following permissions. They are described in an 
+fully, swift-lambda requires the following permissions. They are described in an 
 AWS [IAM Policy][iam-policy-ref] document in JSON format below. This policy covers
-everything you need to run Swiftda's `setup`, `deploy`, `invoke` and `destroy` 
+everything you need to run swift-lambda's `setup`, `deploy`, `invoke` and `destroy` 
 commands.
 
 [aws-cli]: https://aws.amazon.com/cli/

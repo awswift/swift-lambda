@@ -1,7 +1,7 @@
 import Foundation
-import SwiftdaRuntime
+import SwiftLambdaRuntime
 
-SwiftdaRuntime().run { event, context, callback in
+SwiftLambdaRuntime().run { event, context, callback in
     let name = event["name"] ?? "World" 
     callback(["output": "Hello, \(name)"])
 }

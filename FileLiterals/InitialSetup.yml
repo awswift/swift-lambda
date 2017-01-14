@@ -23,12 +23,12 @@ Resources:
 
 Outputs:
   CodeStorageBucket:
-    Description: Default bucket for Swiftda-managed functions
+    Description: Default bucket for swift-lambda-managed functions
     Value: !Ref CodeStorageBucket
     Export:
-      Name: SwiftdaCodeStorageBucket
+      Name: SwiftLambdaCodeStorageBucket
   ExecutionRoleArn:
-    Description: ARN of default Lambda execution role for Swiftda-managed functions
+    Description: ARN of default Lambda execution role for swift-lambda-managed functions
     Value: !GetAtt ExecutionRole.Arn
     Export:
-      Name: SwiftdaExecutionRoleArn
+      Name: SwiftLambdaExecutionRoleArn
