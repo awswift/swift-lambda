@@ -154,6 +154,11 @@ class InvokeCommand {
 
 class LogsCommand {
     func command(tail: Bool) throws {
+        _ = try logs(tail: tail)
+    }
+    
+    // TODO: leaky because of unit testing?
+    func logs(tail: Bool) throws -> String {
         let config = Template.parseTemplateAtPath(".")!
 
         let stackOutputs = try CloudFormation.outputs(name: config.name)
@@ -179,7 +184,8 @@ class LogsCommand {
             "--query events[*].message",
             "--output text"
             ].joined(separator: " ")
-        _ = try ShellCommand.piped(command: logLinesInvocation, label: "log lines fetch")
+        let (logsOut, _) = try ShellCommand.piped(command: logLinesInvocation, label: "log lines fetch")
+        return logsOut
     }
 }
 
