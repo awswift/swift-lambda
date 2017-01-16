@@ -43,6 +43,8 @@ commands.
                 "lambda:InvokeFunction",
                 "lambda:UpdateFunctionCode",
                 "lambda:UpdateFunctionConfiguration",
+                "logs:DescribeLogStreams",
+                "logs:GetLogEvents",
                 "s3:CreateBucket",
                 "s3:DeleteBucket",
                 "s3:GetObject",
