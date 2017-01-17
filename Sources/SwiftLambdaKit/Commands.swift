@@ -43,16 +43,16 @@ class BuildCommand {
 struct CloudFormation {
     static func stackUp(name: String, template: URL, parameters: [String: String]) throws {
         let paramStr = parameters.reduce("") { result, tuple in "\(result) -o \(tuple.key)=\(tuple.value)" }
-        _ = try ShellCommand.piped(command: "stackup \(name) up -t \(template.path) \(paramStr)", label: "cfn up")
+        _ = try ShellCommand.piped(command: "stackup \(name) up -t \(template.path) \(paramStr)", label: "☁️ cfn up")
     }
 
     static func stackDown(name: String) throws {
-        _ = try ShellCommand.piped(command: "stackup \(name) down", label: "cfn down")
+        _ = try ShellCommand.piped(command: "stackup \(name) down", label: "☁️ cfn down")
     }
 
     static func outputs(name: String) throws -> [String: String] {
         let cmd = "aws cloudformation describe-stacks --stack-name \(name) --query Stacks[0].Outputs"
-        let (stdout, _) = try ShellCommand.piped(command: cmd, label: "cfn outputs")
+        let (stdout, _) = try ShellCommand.piped(command: cmd, label: "☁️ cfn outputs")
         let json = JSON(data: stdout.data(using: .utf8)!)
         var outputs: [String: String] = [:]
         json.arrayValue.forEach { outputs[$0["OutputKey"].stringValue] = $0["OutputValue"].stringValue }
@@ -60,7 +60,7 @@ struct CloudFormation {
     }
 
     static func exports() throws -> [String: String] {
-        let (stdout, _) = try ShellCommand.piped(command: "aws cloudformation list-exports", label: "cfn vals")
+        let (stdout, _) = try ShellCommand.piped(command: "aws cloudformation list-exports", label: "☁️ cfn vals")
         let exportsJson = JSON(data: stdout.data(using: .utf8)!)["Exports"].arrayValue
         var exports: [String: String] = [:]
         exportsJson.forEach { exports[$0["Name"].stringValue] = $0["Value"].stringValue }
