@@ -19,7 +19,7 @@ class EndToEndTests: XCTestCase {
         }
 
         try BuildCommand().command()
-        try DeployCommand().command(newVersion: false)
+        try DeployCommand().command(newVersion: false, skipLibs: false)
 
         let output = try InvokeCommand().invoke(async: false, local: false)
         XCTAssert(output.tail.range(of: "Hello, World") != nil)

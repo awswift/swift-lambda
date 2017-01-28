@@ -56,12 +56,16 @@ to run your code. swift-lambda will compile your code in a Lambda-like Docker
 container, zip it up (alongside the Swift runtime) and stick in a few extra 
 files that Lambda requires you to have. 
 
-### `swift lambda deploy [--new-version]`
+### `swift lambda deploy [--new-version] [--skip-libs]`
 
 `deploy` is how you get the Zip file from the previous command onto Lambda 
 itself. You could upload the zip using the AWS web console, but we provide 
 this convenience helper so you can iterate on your code as quickly as you 
 can type.
+
+`--skip-libs` skips uploading the native libraries that the Swift function
+depends on. This makes for a much faster deployment process. Note that this
+flag is temporary and will be automatically calculated and hence removed soon.
 
 ~~`--new-version` lets you take advantage of AWS Lambda [function versioning][fn-ver]. 
 It will increment your function's version number with this latest upload.~~

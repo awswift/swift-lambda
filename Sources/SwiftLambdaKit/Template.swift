@@ -69,8 +69,8 @@ struct Template {
         return json["Metadata"]["Timeout"].stringValue
     }
     
-    var yumDependencies: [String] {
-        return (json["Metadata"]["YumDependencies"].array ?? []).map { $0.stringValue }
+    var aptDependencies: [String] {
+        return (json["Metadata"]["AptDependencies"].array ?? []).map { $0.stringValue }
     }
 
     func write(to url: URL) {

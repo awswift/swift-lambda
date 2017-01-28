@@ -15,8 +15,8 @@ In its basic form, this is a JSON file that looks like the following:
     "Description": "My awesome new backend function written in Swift",
     "Memory": 128,
     "Timeout": 30,
-    "YumDependencies": [
-        "openssl-devel"
+    "AptDependencies": [
+        "openssl-dev"
     ]
 }
 ```
@@ -34,7 +34,7 @@ In its basic form, this is a JSON file that looks like the following:
   seconds that Lambda will wait before considering your function to have timed
   out and be forcibly terminated. You are billed per 100ms of actual runtime,
   not how much time you allocate.
-* The `YumDependencies` field is optional. It is an array of native dependencies
+* The `AptDependencies` field is optional. It is an array of native dependencies
   that your Swift program (or its packages) needs in order to compile.
 
 ## Advanced

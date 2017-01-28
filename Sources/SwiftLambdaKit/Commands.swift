@@ -24,12 +24,13 @@ class BuildCommand {
         dockerfile = dockerfile.replacingOccurrences(of: "<packageName>", with: packageName)
         
         let template = Template.parseTemplateAtPath(".")!
-        let yumDeps = template.yumDependencies.sorted()
-        let yumReplacement = yumDeps.count > 0 ? "RUN yum -y install \(yumDeps.joined(separator: " "))" : ""
-        dockerfile = dockerfile.replacingOccurrences(of: "<yumDependencies>", with: yumReplacement)
+        let aptDeps = template.aptDependencies.sorted()
+        let yumReplacement = aptDeps.count > 0 ? "RUN yum -y install \(aptDeps.joined(separator: " "))" : ""
+        dockerfile = dockerfile.replacingOccurrences(of: "<aptDependencies>", with: yumReplacement)
         
         try dockerfile.write(toFile: dockerfilePath, atomically: true, encoding: .utf8)
         try FileLiterals.index.write(toFile: ".swift-lambda/index.js", atomically: true, encoding: .utf8)
+        try FileLiterals.resolvedDeps.write(toFile: ".swift-lambda/resolvedDeps.py", atomically: true, encoding: .utf8)
 
         let imageId = "swift-lambda-builder-\(packageName):\(arc4random())"
         let containerId = "swift-lambda-\(packageName)-\(arc4random())"
@@ -37,6 +38,7 @@ class BuildCommand {
         _ = try ShellCommand.piped(command: "docker build -f \(dockerfilePath) -t \(imageId) .", label: "🐳 build")
         _ = try ShellCommand.piped(command: "docker run -i --name \(containerId) \(imageId) true", label: "🐳 container")
         _ = try ShellCommand.piped(command: "docker cp \(containerId):/app/lambda.zip \(packageName).lambda.zip", label: "copy zip")
+        _ = try ShellCommand.piped(command: "docker cp \(containerId):/app/lambda.libs.zip \(packageName).lambda.libs.zip", label: "copy libs zip")
     }
 }
 
@@ -69,7 +71,7 @@ struct CloudFormation {
 }
 
 class DeployCommand {
-    func command(newVersion: Bool) throws {
+    func command(newVersion: Bool, skipLibs: Bool) throws {
         let config = Template.parseTemplateAtPath(".")!
 
         let zipUrl = URL(string: "\(config.name).lambda.zip", relativeTo: config.url)!
@@ -78,22 +80,34 @@ class DeployCommand {
         guard FileManager.default.fileExists(atPath: zipPath) else {
             return
         }
+        
+//        let headLibs = try s3Head(bucket: config.bucket, key: "\(config.key).libs")
+//        let md5 = headLibs["Metadata"]["MD5Checksum"].string
+        if !skipLibs {
+            _ = try ShellCommand.piped(command: "aws s3 cp \(config.name).lambda.libs.zip s3://\(config.bucket)/\(config.key).libs", label: "s3 cp libs")
+        }
 
         _ = try ShellCommand.piped(command: "aws s3 cp \(zipPath) s3://\(config.bucket)/\(config.key)", label: "s3 cp")
-        let cmd = "aws s3api head-object --bucket \(config.bucket) --key \(config.key) --query VersionId --output text"
-        let (s3stdout, _) = try ShellCommand.piped(command: cmd, label: "s3 ver")
-        let s3version = s3stdout.trimmingCharacters(in: .newlines)
+        let s3version = try s3Head(bucket: config.bucket, key: config.key)["VersionId"].stringValue
 
         let params = [
             "S3Bucket": config.bucket,
             "S3Key": config.key,
             "S3ObjectVersion": s3version,
-            "Role": config.role
+            "Role": config.role,
+            "LibsS3Bucket": config.bucket,
+            "LibsS3Key": "\(config.key).libs"
         ]
 
         let templateURL = URL(fileURLWithPath: ".swift-lambda/cloudformation.yml")
         try FileLiterals.CloudFormation.write(to: templateURL, atomically: true, encoding: .utf8)
         try CloudFormation.stackUp(name: config.name, template: templateURL, parameters: params)
+    }
+    
+    func s3Head(bucket: String, key: String) throws -> JSON {
+        let cmd = "aws s3api head-object --bucket \(bucket) --key \(key) --output json"
+        let (stdout, _) = try ShellCommand.piped(command: cmd, label: "s3 head")
+        return JSON(data: stdout.data(using: .utf8)!)
     }
 }
 
@@ -235,7 +249,7 @@ public let MainCommand = Group {
 
     $0.command("build", BuildCommand().command)
 
-    $0.command("deploy", Flag("new-version", description: "Generate new version from new code"), DeployCommand().command)
+    $0.command("deploy", Flag("new-version", description: "Generate new version from new code"), Flag("skip-libs", description: "Skip uploading native dependencies"), DeployCommand().command)
 
     $0.command("logs", Flag("tail"), LogsCommand().command)
 
